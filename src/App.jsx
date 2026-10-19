@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 const initialTasks = [
@@ -30,7 +30,18 @@ const initialTasks = [
 ];
 
 function App() {
-  const [tasks, setTasks] = useState(initialTasks);
+ const [tasks, setTasks] = useState(() => {
+  try {
+    const savedTasks = localStorage.getItem("campusflow-tasks");
+    return savedTasks ? JSON.parse(savedTasks) : initialTasks;
+  } catch {
+    return initialTasks;
+  }
+});
+
+useEffect(() => {
+  localStorage.setItem("campusflow-tasks", JSON.stringify(tasks));
+}, [tasks]);
   const [filter, setFilter] = useState("All");
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
